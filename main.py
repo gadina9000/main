@@ -8,6 +8,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import asyncio
 import os
+import threading
+from flask import Flask
+from telebot import types
 
 # --- КОНФИГ ---
 BOT_TOKEN = os.getenv('BOT_TOKEN') 
@@ -17,6 +20,29 @@ symbols = ['BTC/USDT', 'ETH/USDT', 'BNB/USDT', 'SOL/USDT', 'XRP/USDT', 'ADA/USDT
 binance = ccxt.binance({'options': {'defaultType': 'future'}})
 bot = telebot.TeleBot(BOT_TOKEN)
 last_signals = {symbol: None for symbol in symbols}
+
+# --- БЛОК ЗАТЫЧКИ (HEALTH CHECK) ---
+app = Flask(__name__)
+
+@app.route('/')
+def health_check():
+    return "OK", 200
+
+def run_flask():
+    app.run(host='0.0.0.0', port=8000)
+
+threading.Thread(target=run_flask, daemon=True).start()
+
+# --- БЛОК КНОПКИ "ЖИВОЙ?" ---
+@bot.message_handler(commands=['start'])
+def start(message):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    markup.add(types.KeyboardButton("Живой?"))
+    bot.send_message(message.chat.id, "Бот запущен. Используй кнопку:", reply_markup=markup)
+
+@bot.message_handler(func=lambda message: message.text == "Живой?")
+def check_status(message):
+    bot.send_message(message.chat.id, "✅ Да, тружусь, всё хорошо!")
 
 # --- МАТЕМАТИКА И ИНДИКАТОРЫ ---
 def calculate_indicators(df):
