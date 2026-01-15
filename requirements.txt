@@ -2,4 +2,6 @@ ccxt
 pyTelegramBotAPI
 pandas
 numpy
+
 matplotlib
+flask
