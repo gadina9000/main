@@ -154,5 +154,12 @@ async def main():
         await check_market()
         await asyncio.sleep(20)
 
-if __name__ == "__main__":
+def run_scanner():
     asyncio.run(main())
+
+if __name__ == "__main__":
+    # Запускаем сканер в отдельном потоке, чтобы он не мешал кнопкам
+    threading.Thread(target=run_scanner, daemon=True).start()
+    
+    # Запускаем прослушивание Telegram (обязательно в конце!)
+    bot.infinity_polling()
