@@ -108,10 +108,10 @@ async def check_market():
             action = None
             if market_active and vol_spike:
                 # BUY: Тренд 1ч вверх + RSI < 35 + отскок от Фибо 0.382
-                if trend_up and curr['rsi'] < 35 and curr['c'] <= fibs['0.5']:
+                if trend_up and curr['rsi'] < 45 and curr['c'] <= fibs['0.382']:
                     action = "BUY"
-                # SELL: Тренд 1ч вниз + RSI > 65 + цена у Фибо 0.618
-                elif not trend_up and curr['rsi'] > 65 and curr['c'] >= fibs['0.618']:
+                # SELL: Тренд 1ч вниз + RSI > 55 + цена у Фибо 0.618
+                elif not trend_up and curr['rsi'] > 55 and curr['c'] >= fibs['0.618']:
                     action = "SELL"
 
             print(f"[{symbol}] RSI:{curr['rsi']:.1f} Z:{curr['z_score']:.1f} ATR:{market_active} Sig:{action}")
